@@ -1,11 +1,10 @@
 #############################################################################
-# Makefile for the project arduino-md5test.c
+# Makefile for the project md5test-serial.c
 ###############################################################################
 
-PROJECT = avrhwrng-md5test
+PROJECT = md5test-serial
 MCU = atmega168
-TARGET = avrhwrng-md5test.elf
-CPP = avr-g++
+TARGET = md5test-serial.elf
 CC = avr-gcc
 
 ## Options common to compile, link and assembly rules
@@ -14,11 +13,11 @@ COMMON = -mmcu=$(MCU)
 ## Compile options common for all C compilation units.
 CFLAGS = $(COMMON)
 CFLAGS += -Wall -O2 -g -DF_CPU=16000000UL
-CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d 
+CFLAGS += -MD -MP -MT $(*F).o -MF $(@F).d
 
 ## Linker flags
 LDFLAGS = $(COMMON)
-LDFLAGS += -Wl,-Map=avrhwrng-md5test.map
+LDFLAGS += -Wl,-Map=md5test-serial.map
 
 ## Intel Hex file production flags
 HEX_FLASH_FLAGS = -R .eeprom -R .fuse -R .lock -R .signature
@@ -28,24 +27,22 @@ HEX_EEPROM_FLAGS += --set-section-flags=.eeprom="alloc,load"
 HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 ## Objects that must be built in order to link
-OBJECTS = avrhwrng-md5test.o md5.o uart.o
+OBJECTS = md5test-serial.o md5.o uart.o
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = md5.S
 
 ## Build
-all: $(TARGET) avrhwrng-md5test.hex avrhwrng-md5test.eep avrhwrng-md5test.lss size
+all: $(TARGET) md5test-serial.hex md5test-serial.eep md5test-serial.lss size
 
 ## Compile
-%.o: %.cpp
-	$(CPP) -c $< $(CFLAGS) $(LDFLAGS) -o $@
 
 %.o: %.c
 	$(CC) -c $< $(CFLAGS) $(LDFLAGS) -o $@
 
 ##Link
 $(TARGET): $(OBJECTS)
-	 $(CPP) $(LDFLAGS) $(OBJECTS) $(LINKONLYOBJECTS) $(LIBDIRS) $(LIBS) -o $(TARGET)
+	 $(CC) -o $(TARGET) $(LDFLAGS) $(OBJECTS) $(LINKONLYOBJECTS) $(LIBDIRS) $(LIBS)
 
 %.hex: $(TARGET)
 	avr-objcopy -O ihex $(HEX_FLASH_FLAGS)  $< $@
@@ -64,9 +61,5 @@ size: ${TARGET}
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf $(OBJECTS) avrhwrng-md5test.elf dep/* avrhwrng-md5test.hex avrhwrng-md5test.eep avrhwrng-md5test.lss avrhwrng-md5test.map
-
-
-## Other dependencies
--include $(shell mkdir dep 2>/dev/null) $(wildcard dep/*)
+	-rm -rf $(OBJECTS) md5test-serial.elf md5test-serial.hex md5test-serial.eep md5test-serial.lss md5test-serial.map
 
