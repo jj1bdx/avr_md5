@@ -1,6 +1,6 @@
 # MD5 program for AVR / Arduino
 
-* An assembly language implementation of MD5 for ATmega168
+* An assembly language implementation of MD5 for ATmega328p
 * Based on the blog article at <http://j00ru.vexillium.org/?p=1112>
 * See each piece of code for the license details
 
